@@ -1,0 +1,26 @@
+struct segtree{
+	int Start,End,val;
+	segtree *son[2];
+	segtree(){
+		Start=End=val=0;
+		son[0]=son[1]=NUL;
+	}
+	void update(){
+		val=son[0]->val+son[1]->val;
+	}
+	void build(segtree *last,int nstart,int nend,int key){
+		Start=nstart;End=nend;
+		if(nstart==nend){val=last->val+1;return;}
+		int mid=(Start+End)>>1,flag=(key>mid);
+		son[flag^1]=last->son[flag^1];
+		if(flag) (son[1]=new(segtree))->build(last->son[1],mid+1,nend,key);
+		else (son[0]=new(segtree))->build(last->son[0],nstart,mid,key);
+		update();
+	}
+	int query(segtree *last,int nstart,int nend,int key){
+		if(nstart==nend) return nstart;
+		int mid=(nstart+nend)>>1,flag=son[0]->val-last->son[0]->val;
+		if(key<=flag) return son[0]->query(last->son[0],nstart,mid,key);
+		else return son[1]->query(last->son[1],mid+1,nend,key-flag);
+	}
+}*root[MAXN],*rt;
